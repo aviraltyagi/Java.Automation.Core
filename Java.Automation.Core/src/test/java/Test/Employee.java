@@ -1,33 +1,24 @@
 package Test;
 
-import RestAssured.API.Helper.JsonParser;
-import contract.Users;
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import RestAssured.API.Core.Context;
+import RestAssured.API.Core.HttpClient;
+import RestAssured.Application.API.Methods.UserHelper;
 
 public class Employee {
+	public Context _context = new Context();
 
-	public static void main(String[] args) {
-		RestAssured.baseURI = "https://reqres.in/";
-		RequestSpecification request = RestAssured.given();
-
-		Users user = new Users();
-		user.setName("Henry Mars");
-		user.setJob("Software Engineer");
-		JsonParser jsonParser = new JsonParser();
-
-		String jsonRequest = jsonParser.SerializeToJson(user);
-
-		request.body(jsonRequest);
-
-		Response response = request.post("api/users");
-
-		int statusCode = response.getStatusCode();
-		String body = response.body().asPrettyString();
-
-		System.out.println(body);
-		Users responseObject = jsonParser.DeserializeToObject(body, Users.class);
+	public Employee() {
+		_context.setBaseUrl("https://reqres.in/");
 	}
 
+	@Test
+	public void FirstTest() {
+		_context.setHttpClient(null, null);
+		UserHelper userHelper = new UserHelper(_context);
+		userHelper.createUser("Tom", "Developer");
+		Assert.assertEquals(_context.StatusCode, 201);
+	}
 }
