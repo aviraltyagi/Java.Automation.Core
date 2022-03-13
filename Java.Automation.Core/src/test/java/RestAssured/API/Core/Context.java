@@ -2,6 +2,8 @@ package RestAssured.API.Core;
 
 import java.util.HashMap;
 
+import RestAssured.API.Helper.IRestResponse;
+import RestAssured.API.Helper.RestResponse;
 import io.restassured.http.Cookie;
 import io.restassured.http.Headers;
 import io.restassured.response.Response;
@@ -18,45 +20,36 @@ public class Context {
 		this._baseUrl = baseUrl;
 	}
 
-	public String LastResult;
-	public int StatusCode;
-	public String ContentType;
-	public Headers ResponseHeaders;
-
-	public void setLastResult(Response response) {
-		StatusCode = response.statusCode();
-		ContentType = response.contentType();
-		ResponseHeaders = response.headers();
-		LastResult = response.asPrettyString();
+	public <TRequest, TResponse> IRestResponse<TResponse> ExecutePostRequest(String relativeUrl, TRequest request,
+			Class<TResponse> clazz) {
+		IRestResponse<TResponse> response = HttpClient.ExecutePostRequest(relativeUrl, request, clazz);
+		response.getBody();
+		return response;
 	}
 
-	public String ExecutePostRequest(String relativeUrl, String requestBody) {
-		Response response = HttpClient.ExecutePostRequest(relativeUrl, requestBody);
-		setLastResult(response);
-		return response.asPrettyString();
+	public <TResponse> IRestResponse<TResponse> ExecuteGetRequest(String relativeUrl, Class<TResponse> clazz) {
+		IRestResponse<TResponse> response = HttpClient.ExecuteGetRequest(relativeUrl, clazz);
+		response.getBody();
+		return response;
 	}
 
-	public String ExecuteGetRequest(String relativeUrl) {
-		Response response = HttpClient.ExecuteGetRequest(relativeUrl);
-		setLastResult(response);
-		return response.asPrettyString();
+	public <TRequest, TResponse> IRestResponse<TResponse> ExecutePutRequest(String relativeUrl, TRequest request,
+			Class<TResponse> clazz) {
+		IRestResponse<TResponse> response = HttpClient.ExecutePutRequest(relativeUrl, request, clazz);
+		response.getBody();
+		return response;
 	}
 
-	public String ExecutePutRequest(String relativeUrl, String requestBody) {
-		Response response = HttpClient.ExecutePutRequest(relativeUrl, requestBody);
-		setLastResult(response);
-		return response.asPrettyString();
+	public <TResponse> IRestResponse<TResponse> ExecuteDeleteRequest(String relativeUrl, Class<TResponse> clazz) {
+		IRestResponse<TResponse> response = HttpClient.ExecuteDeleteRequest(relativeUrl, clazz);
+		response.getBody();
+		return response;
 	}
 
-	public String ExecuteDeleteRequest(String relativeUrl) {
-		Response response = HttpClient.ExecuteDeleteRequest(relativeUrl);
-		setLastResult(response);
-		return response.asPrettyString();
-	}
-
-	public String ExecutePatchRequest(String relativeUrl, String requestBody) {
-		Response response = HttpClient.ExecutePatchRequest(relativeUrl, requestBody);
-		setLastResult(response);
-		return response.asPrettyString();
+	public <TRequest, TResponse> IRestResponse<TResponse> ExecutePatchRequest(String relativeUrl, TRequest request,
+			Class<TResponse> clazz) {
+		IRestResponse<TResponse> response = HttpClient.ExecutePatchRequest(relativeUrl, request, clazz);
+		response.getBody();
+		return response;
 	}
 }
