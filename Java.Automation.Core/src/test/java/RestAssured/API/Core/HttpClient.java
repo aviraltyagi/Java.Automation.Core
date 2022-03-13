@@ -2,11 +2,10 @@ package RestAssured.API.Core;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.lang3.NotImplementedException;
-
 import RestAssured.API.Helper.AuthorizationType;
-import RestAssured.API.Helper.RequestFormat;
+import RestAssured.API.Helper.IRestResponse;
+import RestAssured.API.Helper.JsonParser;
+import RestAssured.API.Helper.RestResponse;
 import io.restassured.RestAssured;
 import io.restassured.http.Cookie;
 import io.restassured.http.Cookies;
@@ -70,24 +69,38 @@ public class HttpClient {
 		_underlyingClient.header(Authorization);
 	}
 
-	public Response ExecutePostRequest(String relativeUrl, String request) {
-		return _underlyingClient.body(request).post(relativeUrl);
+	public <TRequest, TResponse> IRestResponse<TResponse> ExecutePostRequest(String relativeUrl, TRequest request,
+			Class<TResponse> clazz) {
+		JsonParser jsonParser = new JsonParser();
+		String requestBody = jsonParser.SerializeToJson(request);
+		Response response = _underlyingClient.body(requestBody).post(relativeUrl);
+		return new RestResponse<TResponse>(clazz, response);
 	}
 
-	public Response ExecuteGetRequest(String relativeUrl) {
-		return _underlyingClient.get(relativeUrl);
+	public <TResponse> IRestResponse<TResponse> ExecuteGetRequest(String relativeUrl, Class<TResponse> clazz) {
+		Response response = _underlyingClient.get(relativeUrl);
+		return new RestResponse<TResponse>(clazz, response);
 	}
 
-	public Response ExecutePutRequest(String relativeUrl, String request) {
-		return _underlyingClient.body(request).put(relativeUrl);
+	public <TRequest, TResponse> IRestResponse<TResponse> ExecutePutRequest(String relativeUrl, TRequest request,
+			Class<TResponse> clazz) {
+		JsonParser jsonParser = new JsonParser();
+		String requestBody = jsonParser.SerializeToJson(request);
+		Response response = _underlyingClient.body(request).put(relativeUrl);
+		return new RestResponse<TResponse>(clazz, response);
 	}
 
-	public Response ExecuteDeleteRequest(String relativeUrl) {
-		return _underlyingClient.delete(relativeUrl);
+	public <TResponse> IRestResponse<TResponse> ExecuteDeleteRequest(String relativeUrl, Class<TResponse> clazz) {
+		Response response = _underlyingClient.delete(relativeUrl);
+		return new RestResponse(clazz, response);
 	}
 
-	public Response ExecutePatchRequest(String relativeUrl, String request) {
-		return _underlyingClient.body(request).patch(relativeUrl);
+	public <TRequest, TResponse> IRestResponse<TResponse> ExecutePatchRequest(String relativeUrl, TRequest request,
+			Class<TResponse> clazz) {
+		JsonParser jsonParser = new JsonParser();
+		String requestBody = jsonParser.SerializeToJson(request);
+		Response response = _underlyingClient.body(request).patch(relativeUrl);
+		return new RestResponse<TResponse>(clazz, response);
 	}
 
 }
